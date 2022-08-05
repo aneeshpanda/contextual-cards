@@ -1,15 +1,73 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 
 import "./Card.styles.css";
 
-const Card = ({ cardData }) => {
-  return <div className="card">{cardData.name}</div>;
+const Card = ({ cardData, designType, maxHeight }) => {
+  const [inlineStyle, setInlineStyle] = useState({
+    width: "100%",
+    minWidth: "100%",
+  });
+  const getBackground = () => {
+    if (cardData?.bg_image?.image_type === "ext") {
+      return {
+        backgroundImage: `url(${cardData?.bg_image.image_url})`,
+      };
+    }
+    if (cardData?.bg_gradient && cardData?.bg_color) {
+      return {
+        background: `linear-gradient(${
+          cardData?.bg_gradient?.angle
+        }, ${cardData?.bg_gradient?.colors.join()})`,
+        backgroundColor: cardData?.bg_color,
+      };
+    }
+    if (cardData?.bg_color) {
+      return {
+        background: cardData?.bg_color,
+      };
+    }
+    return {
+      background: "#ffffff",
+    };
+  };
+
+  if (designType === "HC5" || designType === "HC9") {
+    const image = new Image();
+    image.src = cardData?.bg_image?.image_url;
+    image.onload = () => {
+      if (designType === "HC5")
+        setInlineStyle({
+          ...inlineStyle,
+          height: maxHeight,
+          minHeight: maxHeight,
+        });
+      else if (designType === "HC9") {
+        setInlineStyle({
+          ...inlineStyle,
+          width: image.width,
+          minWidth: image.width,
+        });
+      }
+    };
+  }
+
+  return (
+    <a
+      href={cardData?.url}
+      className={`card card-${designType}`}
+      style={{ ...inlineStyle, ...getBackground() }}
+    >
+      {cardData.name}
+    </a>
+  );
 };
 
 export default Card;
 
 Card.defaultProps = {
   cardData: {},
+  maxHeight: null,
 };
 Card.propTypes = {
   cardData: PropTypes.shape({
@@ -63,4 +121,6 @@ Card.propTypes = {
       })
     ),
   }),
+  designType: PropTypes.string.isRequired,
+  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };

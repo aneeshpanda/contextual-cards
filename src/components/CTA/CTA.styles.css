@@ -1,0 +1,8 @@
+.cta {
+  display: flex;
+  justify-content: center;
+  width: 128px;
+  height: 42px;
+  border-radius: 6px;
+  align-items: center;
+}

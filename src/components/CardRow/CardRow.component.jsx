@@ -1,14 +1,61 @@
 import PropTypes from "prop-types";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import Card from "../Card/Card.component";
 
 import "./CardRow.styles.css";
 
 const CardRow = ({ cardRowData }) => {
+  const [maxHeight, setMaxHeight] = useState(null);
+  const cardRowRef = useRef(null);
+  const [clientWidth, setClientWidth] = useState(0);
+  useLayoutEffect(() => {
+    setClientWidth(cardRowRef.current.offsetWidth);
+  }, []);
+  const addImageProcess = (src) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img.height);
+      img.onerror = reject;
+      img.src = src;
+    });
+  };
+  const getHeight = async () => {
+    let heights = [];
+    for (let i = 0; i < cardRowData.cards.length; i += 1) {
+      heights.push(addImageProcess(cardRowData.cards[i]?.bg_image?.image_url));
+    }
+    heights = await Promise.all(heights);
+    setMaxHeight((clientWidth / 1280) * Math.max(...heights));
+  };
+
+  if (cardRowData.design_type === "HC5") {
+    getHeight();
+  }
+
   return (
-    <div className="card-row">
+    <div
+      className={`card-row card-row-${cardRowData.design_type}`}
+      ref={cardRowRef}
+      style={{
+        width: cardRowData.is_scrollable ? "100%" : "calc(100% - 20px)",
+        minWidth: cardRowData.is_scrollable ? "100%" : "calc(100% - 20px)",
+        overflowX:
+          cardRowData.is_scrollable || cardRowData.design_type === "H9"
+            ? "scroll"
+            : "hidden",
+        minHeight: maxHeight,
+      }}
+    >
       {cardRowData.cards.map((card, index) => {
-        return <Card cardData={card} key={index} />;
+        return (
+          <Card
+            cardData={card}
+            designType={cardRowData.design_type}
+            maxHeight={maxHeight}
+            key={index}
+          />
+        );
       })}
     </div>
   );

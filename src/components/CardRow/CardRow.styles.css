@@ -1,5 +1,23 @@
 .card-row {
   display: flex;
-  flex-wrap: wrap;
   gap: 15px;
+  overflow-y: hidden;
+}
+.card-row::-webkit-scrollbar {
+  display: none;
+}
+
+.card-row-HC1 {
+  min-height: 60px;
+}
+.card-row-HC3 {
+  min-height: 350px;
+}
+
+.card-row-HC6 {
+  min-height: 60px;
+}
+
+.card-row-HC9 {
+  min-height: 195px;
 }

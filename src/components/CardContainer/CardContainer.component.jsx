@@ -8,7 +8,6 @@ import "./CardContainer.styles.css";
 
 const CardContainer = () => {
   const [cardsData, setCardsData] = useState([]);
-
   useEffect(() => {
     cardAPI()
       .then((res) => {

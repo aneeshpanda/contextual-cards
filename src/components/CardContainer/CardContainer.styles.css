@@ -1,0 +1,14 @@
+.card-container {
+  background: #f7f6f3;
+  border-radius: 12px 12px 0px 0px;
+  height: calc(100vh - 132px);
+  overflow: scroll;
+  padding: 24px 0px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-container::-webkit-scrollbar {
+  display: none;
+}

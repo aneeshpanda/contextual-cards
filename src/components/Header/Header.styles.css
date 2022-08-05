@@ -1,0 +1,7 @@
+.header {
+  padding: 39px 0 21px;
+  background: #ffffff;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
+}

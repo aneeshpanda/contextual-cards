@@ -1,5 +1,4 @@
 .card-row {
-  display: flex;
   gap: 15px;
   overflow-y: hidden;
 }

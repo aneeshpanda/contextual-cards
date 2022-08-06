@@ -9,6 +9,8 @@ const CardRow = ({ cardRowData }) => {
   const [maxHeight, setMaxHeight] = useState(null);
   const cardRowRef = useRef(null);
   const [clientWidth, setClientWidth] = useState(0);
+  const [remindLater, setRemindLater] = useState(false);
+  const [dismissNow, setDismissNow] = useState(false);
   useLayoutEffect(() => {
     setClientWidth(cardRowRef.current.offsetWidth);
   }, []);
@@ -45,6 +47,10 @@ const CardRow = ({ cardRowData }) => {
             ? "scroll"
             : "hidden",
         minHeight: maxHeight,
+        display:
+          cardRowData.cards.length === 1 && (remindLater || dismissNow)
+            ? "none"
+            : "flex",
       }}
     >
       {cardRowData.cards.map((card, index) => {
@@ -53,6 +59,10 @@ const CardRow = ({ cardRowData }) => {
             cardData={card}
             designType={cardRowData.design_type}
             maxHeight={maxHeight}
+            remindLater={remindLater}
+            setRemindLater={setRemindLater}
+            dismissNow={dismissNow}
+            setDismissNow={setDismissNow}
             key={index}
           />
         );

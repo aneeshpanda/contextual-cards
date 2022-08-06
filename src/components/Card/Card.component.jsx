@@ -1,18 +1,52 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 
+import Button from "../Button/Button.component";
 import CTA from "../CTA/CTA.component";
 
-import Arrow from "../../assets/icons/arrow.svg";
+import useLongPress from "../../hooks/useLongPress";
 
-import "./Card.styles.css";
 import { formatText } from "../../utils/formatText";
 
-const Card = ({ cardData, designType, maxHeight }) => {
+import Arrow from "../../assets/icons/arrow.svg";
+import Bell from "../../assets/icons/bell.svg";
+import Cross from "../../assets/icons/cross.svg";
+
+import "./Card.styles.css";
+
+const Card = ({
+  cardData,
+  designType,
+  maxHeight,
+  remindLater,
+  setRemindLater,
+  dismissNow,
+  setDismissNow,
+}) => {
   const [inlineStyle, setInlineStyle] = useState({
     width: "100%",
     minWidth: "100%",
   });
+  const [isLongPressed, setIsLongPressed] = useState(false);
+  const onLongPress = () => {
+    setIsLongPressed(true);
+  };
+  const onClick = () => {};
+  const onClickRemindLater = (e) => {
+    e.stopPropagation();
+    setRemindLater(true);
+  };
+  const onClickDismissNow = (e) => {
+    e.stopPropagation();
+    setDismissNow(true);
+  };
+
+  const defaultOptions = {
+    shouldPreventDefault: true,
+    delay: 500,
+  };
+  const { onMouseDown, onMouseLeave, onMouseUp, onTouchEnd, onTouchStart } =
+    useLongPress(onLongPress, onClick, defaultOptions);
   const getBackground = () => {
     if (cardData?.bg_image?.image_type === "ext") {
       return {
@@ -55,49 +89,81 @@ const Card = ({ cardData, designType, maxHeight }) => {
   };
 
   return (
-    <a
-      href={cardData?.url}
-      className={`card card-${designType}`}
-      style={{ ...inlineStyle, ...getBackground() }}
+    <div
+      className={`card-wrapper card-wrapper-${designType}`}
+      style={{
+        ...inlineStyle,
+        ...{ display: remindLater || dismissNow ? "none" : "flex" },
+      }}
+      role="button"
+      tabIndex="0"
+      onMouseDown={onMouseDown}
+      onMouseLeave={onMouseLeave}
+      onMouseUp={onMouseUp}
+      onTouchEnd={onTouchEnd}
+      onTouchStart={onTouchStart}
     >
-      <div className="content">
-        <div className="left">
-          <div className="icon">
-            {cardData?.icon?.image_type === "ext" ? (
-              <img src={cardData?.icon?.image_url} alt="icon" />
-            ) : null}
-          </div>
-
-          <div className="details">
-            <div className="title">
-              {formatText(cardData.formatted_title, cardData.title)}
-            </div>
-            <div className="description">
-              {formatText(cardData.formatted_description, cardData.description)}
-            </div>
-            <div className="cta-group">
-              {cardData?.cta?.map((cta, index) => {
-                return (
-                  <CTA
-                    key={index}
-                    text={cta.text}
-                    textColor={cta?.text_color}
-                    bgColor={cta?.bg_color}
-                    url={cta?.url}
-                  />
-                );
-              })}
-            </div>
-          </div>
+      {designType === "HC3" && isLongPressed ? (
+        <div className="actions">
+          <Button
+            icon={Bell}
+            text="remind later"
+            action={(e) => onClickRemindLater(e)}
+          />
+          <Button
+            icon={Cross}
+            text="dismiss now"
+            action={(e) => onClickDismissNow(e)}
+          />
         </div>
+      ) : null}
+      <a
+        href={cardData?.url}
+        className={`card card-${designType} isLongPressed-${isLongPressed}`}
+        style={{ ...inlineStyle, ...getBackground() }}
+      >
+        <div className="content">
+          <div className="left">
+            <div className="icon">
+              {cardData?.icon?.image_type === "ext" ? (
+                <img src={cardData?.icon?.image_url} alt="icon" />
+              ) : null}
+            </div>
 
-        {designType === "HC6" ? (
-          <div className="right arrow">
-            <img src={Arrow} alt="arrow" />
+            <div className="details">
+              <div className="title">
+                {formatText(cardData.formatted_title, cardData.title)}
+              </div>
+              <div className="description">
+                {formatText(
+                  cardData.formatted_description,
+                  cardData.description
+                )}
+              </div>
+              <div className="cta-group">
+                {cardData?.cta?.map((cta, index) => {
+                  return (
+                    <CTA
+                      key={index}
+                      text={cta.text}
+                      textColor={cta?.text_color}
+                      bgColor={cta?.bg_color}
+                      url={cta?.url}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        ) : null}
-      </div>
-    </a>
+
+          {designType === "HC6" ? (
+            <div className="right arrow">
+              <img src={Arrow} alt="arrow" />
+            </div>
+          ) : null}
+        </div>
+      </a>
+    </div>
   );
 };
 
@@ -161,4 +227,8 @@ Card.propTypes = {
   }),
   designType: PropTypes.string.isRequired,
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  remindLater: PropTypes.bool.isRequired,
+  setRemindLater: PropTypes.func.isRequired,
+  dismissNow: PropTypes.bool.isRequired,
+  setDismissNow: PropTypes.func.isRequired,
 };

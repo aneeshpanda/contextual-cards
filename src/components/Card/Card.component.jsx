@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 import Button from "../Button/Button.component";
 import CTA from "../CTA/CTA.component";
+import LinkWrapper from "../LinkWrapper/LinkWrapper.component";
+
+import { MessageContext } from "../../context/Message.context";
 
 import useLongPress from "../../hooks/useLongPress";
 
@@ -13,7 +16,6 @@ import Bell from "../../assets/icons/bell.svg";
 import Cross from "../../assets/icons/cross.svg";
 
 import "./Card.styles.css";
-import LinkWrapper from "../LinkWrapper/LinkWrapper.component";
 
 const Card = ({
   cardData,
@@ -25,6 +27,7 @@ const Card = ({
   setDismissNowIndexes,
   cardIndex,
 }) => {
+  const { addSuccess } = useContext(MessageContext);
   const [inlineStyle, setInlineStyle] = useState({
     width: "100%",
     minWidth: "100%",
@@ -33,11 +36,13 @@ const Card = ({
   const onClickRemindLater = (e) => {
     e.stopPropagation();
     setRemindLaterIndexes([...remindLaterIndexes, cardIndex]);
+    addSuccess("Card added to Remind Later");
     setIsLongPressed(false);
   };
   const onClickDismissNow = (e) => {
     e.stopPropagation();
     setDismissNowIndexes([...dismissNowIndexes, cardIndex]);
+    addSuccess("Card added to Dismiss Now");
     setIsLongPressed(false);
   };
 

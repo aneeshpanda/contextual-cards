@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PullToRefresh from "react-simple-pull-to-refresh";
 
 import CardRow from "../CardRow/CardRow.component";
 import Spinner from "../Spinner/Spinner.component";
+
+import { MessageContext } from "../../context/Message.context";
 
 import { card as cardAPI } from "../../api/card";
 
 import "./CardContainer.styles.css";
 
 const CardContainer = () => {
+  const { addError } = useContext(MessageContext);
+
   const [cardsData, setCardsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshCall, setRefreshCall] = useState(false);
@@ -18,20 +22,21 @@ const CardContainer = () => {
       setRefreshCall(true);
       setTimeout(() => {
         res(setRefreshCall(false));
-      }, 500);
+      }, 1000);
     });
   };
 
   useEffect(() => {
     cardAPI()
       .then((res) => {
-        console.log(res.data.card_groups);
         if (res?.data?.card_groups) setCardsData(res.data.card_groups);
-        else console.log("Some unknown error occurred");
+        else {
+          addError("Something went wrong!");
+        }
         setIsLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        addError(err.response?.statusText || "Something went wrong!");
         setIsLoading(false);
       });
   }, []);

@@ -1,16 +1,16 @@
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { useLayoutEffect, useRef, useState } from "react";
 
 import Card from "../Card/Card.component";
 
 import "./CardRow.styles.css";
 
-const CardRow = ({ cardRowData }) => {
+const CardRow = ({ cardRowData, refreshCall }) => {
   const [maxHeight, setMaxHeight] = useState(null);
   const cardRowRef = useRef(null);
   const [clientWidth, setClientWidth] = useState(0);
-  const [remindLater, setRemindLater] = useState(false);
-  const [dismissNow, setDismissNow] = useState(false);
+  const [remindLaterIndexes, setRemindLaterIndexes] = useState([]);
+  const [dismissNowIndexes, setDismissNowIndexes] = useState([]);
   useLayoutEffect(() => {
     setClientWidth(cardRowRef.current.offsetWidth);
   }, []);
@@ -35,6 +35,12 @@ const CardRow = ({ cardRowData }) => {
     getHeight();
   }
 
+  useEffect(() => {
+    if (refreshCall === true) {
+      setRemindLaterIndexes([]);
+    }
+  }, [refreshCall]);
+
   return (
     <div
       className={`card-row card-row-${cardRowData.design_type}`}
@@ -48,7 +54,8 @@ const CardRow = ({ cardRowData }) => {
             : "hidden",
         minHeight: maxHeight,
         display:
-          cardRowData.cards.length === 1 && (remindLater || dismissNow)
+          cardRowData.cards.length === 1 &&
+          (remindLaterIndexes.length > 0 || dismissNowIndexes.length > 0)
             ? "none"
             : "flex",
       }}
@@ -59,10 +66,12 @@ const CardRow = ({ cardRowData }) => {
             cardData={card}
             designType={cardRowData.design_type}
             maxHeight={maxHeight}
-            remindLater={remindLater}
-            setRemindLater={setRemindLater}
-            dismissNow={dismissNow}
-            setDismissNow={setDismissNow}
+            refreshCall={refreshCall}
+            remindLaterIndexes={remindLaterIndexes}
+            setRemindLaterIndexes={setRemindLaterIndexes}
+            dismissNowIndexes={dismissNowIndexes}
+            setDismissNowIndexes={setDismissNowIndexes}
+            cardIndex={index}
             key={index}
           />
         );
@@ -137,4 +146,5 @@ CardRow.propTypes = {
     is_scrollable: PropTypes.bool.isRequired,
     height: PropTypes.number,
   }),
+  refreshCall: PropTypes.bool.isRequired,
 };

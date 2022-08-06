@@ -19,10 +19,11 @@ const Card = ({
   cardData,
   designType,
   maxHeight,
-  remindLater,
-  setRemindLater,
-  dismissNow,
-  setDismissNow,
+  remindLaterIndexes,
+  setRemindLaterIndexes,
+  dismissNowIndexes,
+  setDismissNowIndexes,
+  cardIndex,
 }) => {
   const [inlineStyle, setInlineStyle] = useState({
     width: "100%",
@@ -31,11 +32,13 @@ const Card = ({
   const [isLongPressed, setIsLongPressed] = useState(false);
   const onClickRemindLater = (e) => {
     e.stopPropagation();
-    setRemindLater(true);
+    setRemindLaterIndexes([...remindLaterIndexes, cardIndex]);
+    setIsLongPressed(false);
   };
   const onClickDismissNow = (e) => {
     e.stopPropagation();
-    setDismissNow(true);
+    setDismissNowIndexes([...dismissNowIndexes, cardIndex]);
+    setIsLongPressed(false);
   };
 
   const { action, handlers } = useLongPress();
@@ -100,7 +103,13 @@ const Card = ({
       onKeyDown={() => {}}
       style={{
         ...inlineStyle,
-        ...{ display: remindLater || dismissNow ? "none" : "flex" },
+        ...{
+          display:
+            remindLaterIndexes.includes(cardIndex) ||
+            dismissNowIndexes.includes(cardIndex)
+              ? "none"
+              : "flex",
+        },
       }}
     >
       {designType === "HC3" && isLongPressed ? (
@@ -228,8 +237,9 @@ Card.propTypes = {
   }),
   designType: PropTypes.string.isRequired,
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  remindLater: PropTypes.bool.isRequired,
-  setRemindLater: PropTypes.func.isRequired,
-  dismissNow: PropTypes.bool.isRequired,
-  setDismissNow: PropTypes.func.isRequired,
+  remindLaterIndexes: PropTypes.arrayOf(PropTypes.number).isRequired,
+  setRemindLaterIndexes: PropTypes.func.isRequired,
+  dismissNowIndexes: PropTypes.arrayOf(PropTypes.number).isRequired,
+  setDismissNowIndexes: PropTypes.func.isRequired,
+  cardIndex: PropTypes.number.isRequired,
 };

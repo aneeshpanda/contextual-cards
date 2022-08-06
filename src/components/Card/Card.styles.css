@@ -13,6 +13,24 @@
 .card-wrapper-HC3 .card.isLongPressed-true {
   transform: translateX(20px);
 }
+.button {
+  display: flex;
+  height: 59px;
+  width: 72px;
+  border-radius: 12px;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: 6.76px;
+  background: #f7f6f3;
+  border: none;
+  cursor: pointer;
+}
+
+.button span {
+  font-size: 10px;
+}
 
 .actions {
   display: flex;

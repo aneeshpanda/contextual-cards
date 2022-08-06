@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 import Button from "../Button/Button.component";
@@ -13,6 +13,7 @@ import Bell from "../../assets/icons/bell.svg";
 import Cross from "../../assets/icons/cross.svg";
 
 import "./Card.styles.css";
+import LinkWrapper from "../LinkWrapper/LinkWrapper.component";
 
 const Card = ({
   cardData,
@@ -28,10 +29,6 @@ const Card = ({
     minWidth: "100%",
   });
   const [isLongPressed, setIsLongPressed] = useState(false);
-  const onLongPress = () => {
-    setIsLongPressed(true);
-  };
-  const onClick = () => {};
   const onClickRemindLater = (e) => {
     e.stopPropagation();
     setRemindLater(true);
@@ -41,12 +38,14 @@ const Card = ({
     setDismissNow(true);
   };
 
-  const defaultOptions = {
-    shouldPreventDefault: true,
-    delay: 500,
-  };
-  const { onMouseDown, onMouseLeave, onMouseUp, onTouchEnd, onTouchStart } =
-    useLongPress(onLongPress, onClick, defaultOptions);
+  const { action, handlers } = useLongPress();
+
+  useEffect(() => {
+    if (action === "longpress") setIsLongPressed(true);
+  }, [action]);
+
+  const { onClick, onMouseDown, onMouseUp, onTouchEnd, onTouchStart } =
+    handlers;
   const getBackground = () => {
     if (cardData?.bg_image?.image_type === "ext") {
       return {
@@ -91,17 +90,18 @@ const Card = ({
   return (
     <div
       className={`card-wrapper card-wrapper-${designType}`}
+      role="button"
+      tabIndex="0"
+      onClick={onClick}
+      onMouseDown={onMouseDown}
+      onMouseUp={onMouseUp}
+      onTouchEnd={onTouchEnd}
+      onTouchStart={onTouchStart}
+      onKeyDown={() => {}}
       style={{
         ...inlineStyle,
         ...{ display: remindLater || dismissNow ? "none" : "flex" },
       }}
-      role="button"
-      tabIndex="0"
-      onMouseDown={onMouseDown}
-      onMouseLeave={onMouseLeave}
-      onMouseUp={onMouseUp}
-      onTouchEnd={onTouchEnd}
-      onTouchStart={onTouchStart}
     >
       {designType === "HC3" && isLongPressed ? (
         <div className="actions">
@@ -117,8 +117,9 @@ const Card = ({
           />
         </div>
       ) : null}
-      <a
-        href={cardData?.url}
+      <LinkWrapper
+        display={!isLongPressed}
+        url={cardData?.url}
         className={`card card-${designType} isLongPressed-${isLongPressed}`}
         style={{ ...inlineStyle, ...getBackground() }}
       >
@@ -162,7 +163,7 @@ const Card = ({
             </div>
           ) : null}
         </div>
-      </a>
+      </LinkWrapper>
     </div>
   );
 };

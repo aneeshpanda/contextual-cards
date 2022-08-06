@@ -1,7 +1,12 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 
+import CTA from "../CTA/CTA.component";
+
+import Arrow from "../../assets/icons/arrow.svg";
+
 import "./Card.styles.css";
+import { formatText } from "../../utils/formatText";
 
 const Card = ({ cardData, designType, maxHeight }) => {
   const [inlineStyle, setInlineStyle] = useState({
@@ -24,33 +29,30 @@ const Card = ({ cardData, designType, maxHeight }) => {
     }
     if (cardData?.bg_color) {
       return {
-        background: cardData?.bg_color,
+        backgroundColor: cardData?.bg_color,
       };
     }
     return {
-      background: "#ffffff",
+      backgroundColor: "#ffffff",
     };
   };
-
-  if (designType === "HC5" || designType === "HC9") {
-    const image = new Image();
-    image.src = cardData?.bg_image?.image_url;
-    image.onload = () => {
-      if (designType === "HC5")
-        setInlineStyle({
-          ...inlineStyle,
-          height: maxHeight,
-          minHeight: maxHeight,
-        });
-      else if (designType === "HC9") {
-        setInlineStyle({
-          ...inlineStyle,
-          width: image.width,
-          minWidth: image.width,
-        });
-      }
-    };
-  }
+  const image = new Image();
+  image.src = cardData?.bg_image?.image_url;
+  image.onload = () => {
+    if (designType === "HC5")
+      setInlineStyle({
+        ...inlineStyle,
+        height: maxHeight,
+        minHeight: maxHeight,
+      });
+    else if (designType === "HC9") {
+      setInlineStyle({
+        ...inlineStyle,
+        width: image.width,
+        minWidth: image.width,
+      });
+    }
+  };
 
   return (
     <a
@@ -58,7 +60,43 @@ const Card = ({ cardData, designType, maxHeight }) => {
       className={`card card-${designType}`}
       style={{ ...inlineStyle, ...getBackground() }}
     >
-      {cardData.name}
+      <div className="content">
+        <div className="left">
+          <div className="icon">
+            {cardData?.icon?.image_type === "ext" ? (
+              <img src={cardData?.icon?.image_url} alt="icon" />
+            ) : null}
+          </div>
+
+          <div className="details">
+            <div className="title">
+              {formatText(cardData.formatted_title, cardData.title)}
+            </div>
+            <div className="description">
+              {formatText(cardData.formatted_description, cardData.description)}
+            </div>
+            <div className="cta-group">
+              {cardData?.cta?.map((cta, index) => {
+                return (
+                  <CTA
+                    key={index}
+                    text={cta.text}
+                    textColor={cta?.text_color}
+                    bgColor={cta?.bg_color}
+                    url={cta?.url}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {designType === "HC6" ? (
+          <div className="right arrow">
+            <img src={Arrow} alt="arrow" />
+          </div>
+        ) : null}
+      </div>
     </a>
   );
 };

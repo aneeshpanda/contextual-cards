@@ -3,19 +3,79 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
+  display: flex;
+  align-items: center;
 }
 
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon img {
+  height: 30px;
+  width: 30px;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.details {
+  text-align: left;
+  align-self: center;
+}
+
+.left {
+  display: flex;
+  justify-content: center;
+  text-align: left;
+  gap: 15px;
+}
+.title {
+  font-weight: 500;
+  font-size: 14px;
+  text-align: left;
+}
+
+.description {
+  font-size: 14px;
+}
 .card-HC1 {
   background-size: cover;
   height: 60px;
 }
+
 .card-HC3 {
   background-size: cover;
   height: 350px;
   display: flex;
   flex-direction: column;
   gap: 28px;
-  /* margin-top: 125px; */
+  justify-content: flex-end;
+}
+.card-HC3 .content .left {
+  width: calc(100%);
+}
+.card-HC3 .content .left .details {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: calc(100% - 60px);
+  margin-bottom: 28px;
+}
+.card-HC3 .content .left .details .title {
+  font-weight: 500;
+  font-size: 30px;
+}
+
+.card-HC3 .content .left .details .description {
+  font-size: 12px;
 }
 
 .card-HC6 {
